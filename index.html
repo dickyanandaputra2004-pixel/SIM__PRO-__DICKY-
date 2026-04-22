@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SIM DICKY - INSTIPER GIS</title>
+
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+<style>
+body { margin:0; font-family:Arial; }
+
+#header{
+  background:#0f172a;
+  color:white;
+  padding:12px;
+  text-align:center;
+  font-weight:bold;
+}
+
+#map{ height:92vh; }
+</style>
+</head>
+
+<body>
+
+<div id="header">🌍 SIM DICKY - INSTIPER YOGYAKARTA GIS MAP</div>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+<script>
+
+// =====================
+// CENTER INSTIPER
+// =====================
+const center = [-7.7612784, 110.4246399];
+
+var map = L.map('map').setView(center, 18);
+
+// =====================
+// SATELIT
+// =====================
+L.tileLayer(
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+).addTo(map);
+
+// =====================
+// HITUNG LUAS (m² + ha)
+// =====================
+function hitungLuas(coords){
+  let poly = turf.polygon([coords.map(p => [p[1], p[0]])]);
+  let area = turf.area(poly);
+  return {
+    m2: Math.round(area),
+    ha: (area / 10000).toFixed(2)
+  };
+}
+
+// =====================
+// GEDUNG FUNCTION (FIXED + LUAS)
+// =====================
+function gedung(nama,tipe,warna,coords){
+
+  let poly = L.polygon(coords,{
+    color:"#000",
+    weight:2,
+    fillColor:warna,
+    fillOpacity:0.75
+  }).addTo(map);
+
+  let l = hitungLuas(coords);
+
+  poly.bindPopup(
+    "<b>🏢 " + nama + "</b><br>" +
+    "📌 " + tipe + "<br>" +
+    "📐 Luas: " + l.m2 + " m² (" + l.ha + " ha)<br>" +
+    "📍 INSTIPER Yogyakarta"
+  );
+
+}
+
+// =====================
+// GEDUNG INSTIPER
+// =====================
+
+// REKTORAT
+gedung("Rektorat","Administrasi","#e74c3c",[
+[-7.76132,110.42455],
+[-7.76132,110.42478],
+[-7.76112,110.42478],
+[-7.76112,110.42455]
+]);
+
+// PERTANIAN
+gedung("Fakultas Pertanian","Akademik","#2ecc71",[
+[-7.76155,110.42460],
+[-7.76155,110.42490],
+[-7.76135,110.42490],
+[-7.76135,110.42460]
+]);
+
+// TEKNOLOGI PERTANIAN
+gedung("Teknologi Pertanian","Akademik","#16a085",[
+[-7.76175,110.42460],
+[-7.76175,110.42490],
+[-7.76155,110.42490],
+[-7.76155,110.42460]
+]);
+
+// KEHUTANAN
+gedung("Kehutanan","Akademik","#27ae60",[
+[-7.76195,110.42460],
+[-7.76195,110.42490],
+[-7.76175,110.42490],
+[-7.76175,110.42460]
+]);
+
+// PERPUSTAKAAN
+gedung("Perpustakaan","Fasilitas","#f39c12",[
+[-7.76145,110.42495],
+[-7.76145,110.42520],
+[-7.76125,110.42520],
+[-7.76125,110.42495]
+]);
+
+// LAB PUSAT
+gedung("Laboratorium Pusat","Fasilitas","#8e44ad",[
+[-7.76180,110.42500],
+[-7.76180,110.42525],
+[-7.76160,110.42525],
+[-7.76160,110.42500]
+]);
+
+// LAB PANGAN
+gedung("Lab Pangan","Laboratorium","#9b59b6",[
+[-7.76178,110.42505],
+[-7.76178,110.42525],
+[-7.76160,110.42525],
+[-7.76160,110.42505]
+]);
+
+// KANTIN
+gedung("Kantin","Fasilitas","#f1c40f",[
+[-7.76135,110.42495],
+[-7.76135,110.42515],
+[-7.76115,110.42515],
+[-7.76115,110.42495]
+]);
+
+// MASJID
+gedung("Masjid","Ibadah","#3498db",[
+[-7.76155,110.42495],
+[-7.76155,110.42515],
+[-7.76135,110.42515],
+[-7.76135,110.42495]
+]);
+
+</script>
+
+</body>
+</html>
